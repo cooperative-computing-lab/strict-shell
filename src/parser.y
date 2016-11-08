@@ -282,9 +282,6 @@ expr_group : L_PAREN expr R_PAREN
 	         { $$ = expr_create( EXPR_GROUP, $2, 0); }
 		   | id L_PAREN expr_list R_PAREN
 		     { $$ = expr_create( EXPR_FUNCT, expr_create_name($1), $3); }
-		   | L_BRACE real_expr_block R_BRACE
-				/* TODO: new scopes*/
-		     { $$ = expr_create( 0, 0, 0); }
 		   | L_BRACKET real_expr_block R_BRACKET
 				/* TODO: executions */
 		     { $$ = expr_create( 0, 0, 0); }
