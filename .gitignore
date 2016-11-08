@@ -1,0 +1,7 @@
+*.swp
+*.o
+parser.tab.*
+*.o
+*.output
+*.a
+*.gz

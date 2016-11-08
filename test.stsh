@@ -1,0 +1,22 @@
+string $url = "http://blahblahblah.com";
+
+//expressions are different than executions
+
+int $day = 35;
+
+[ firefox, $url ]
+
+[wget, $url] //try without extra whitespace
+
+string $summary( int $a, string $b)
+	return [ df, -h, / ]; //`-` operator is a dash, minus, and substraction
+END; //functions, conditionals, loops terminated in `END`
+
+array $list = {1, 2, 3, 4, 5}; //arrays are in the `{}` construct
+
+if ( [wc, -c] == 3 )
+	$v = 0
+END;
+
+[cat, "doc.txt" ] | [wc, -l];
+float $test = 14134134.14134325
