@@ -1,7 +1,7 @@
 # Overview
 
-Strict-shell is a new shell meant to replace [BASH][bash]. Unlike BASH,  
-strict-shell is designed to ensure maxmimum predictability in running code and 
+Strict-shell is a new shell meant to replace [BASH][bash]. Unlike BASH, 
+strict-shell is designed to ensure maximum predictability in running code and 
 commands, but requires more verbosity from the coder's perspective.
 
   [bash]: https://www.gnu.org/software/bash/bash.html
@@ -16,5 +16,7 @@ commands, but requires more verbosity from the coder's perspective.
   [bison]: https://www.gnu.org/software/bison/
   [flex]: https://github.com/westes/flex/releases
 
+# Installing and Building
 
+# Running
 
