@@ -99,8 +99,8 @@ void strip_quotes(char * s);
 %type <type> type
 %type <id> id
 
-%left TOKEN_ADD TOKEN_MINUS
-%left TOKEN_MULT TOKEN_DIVIDE TOKEN_MOD
+%left ADD MINUS
+%left MULTIPLY DIVIDE MOD
 /*precedence*/
 
 %%
@@ -238,19 +238,19 @@ expr_compare : expr_compare GT add_expr
 	           { $$ = $1; }
 	         ;
 
-add_expr : add_expr TOKEN_ADD mul_expr
+add_expr : add_expr ADD mul_expr
 		   { $$ = expr_create( EXPR_ADD, $1, $3); }
-		 | add_expr TOKEN_MINUS mul_expr
+		 | add_expr MINUS mul_expr
 		   { $$ = expr_create( EXPR_SUB, $1, $3); }
 		 | mul_expr
 	       { $$ = $1; }
 	     ;
 
-mul_expr : mul_expr TOKEN_MULT exp_expr
+mul_expr : mul_expr MULTIPLY exp_expr
 		    { $$ = expr_create( EXPR_MUL, $1, $3); }
-		  | mul_expr TOKEN_MOD exp_expr
+		  | mul_expr MOD exp_expr
 		    { $$ = expr_create( EXPR_MOD, $1, $3); }
-		  | mul_expr TOKEN_DIVIDE exp_expr
+		  | mul_expr DIVIDE exp_expr
 		    { $$ = expr_create( EXPR_DIV, $1, $3); }
 		  | exp_expr
 		    { $$ = $1; }
@@ -262,7 +262,7 @@ exp_expr : exp_expr EXPON un_expr
 		   { $$ = $1; }
 	     ;
 
-un_expr : TOKEN_MINUS un_expr
+un_expr : MINUS un_expr
 		     { $$ = expr_create( EXPR_NEG, 0, $2); }
 		   | NOT un_expr
 			 { $$ = expr_create( EXPR_NOT, 0, $2); }

@@ -9,7 +9,7 @@ stsh: $(OBJ)
 %.o: %.c %.h
 	$(CC) -c $< -o $@
 
-scanner.c: scanner.flex token.h
+scanner.c: scanner.flex parser.tab.h
 	flex --outfile=$@ $^
 
 parser.tab.c parser.tab.h: parser.y
