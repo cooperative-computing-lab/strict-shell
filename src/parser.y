@@ -5,13 +5,13 @@
 #include <stdio.h>
 #include <string.h>
 
-
 extern char *yytext;
 extern int yylex();
 extern int yyerror( char *str );
+
 struct stmt * program = 0;
-void strip_string(char * s);
-void strip_quotes(char * s);
+void strip_string_parse(char * s);
+void strip_quotes_parse(char * s);
 
 %}
 
@@ -62,6 +62,7 @@ void strip_quotes(char * s);
 %token BOOLEAN 
 %token INTEGER 
 %token VOID 
+%token FLOAT 
 
 %token IF 
 %token ELSE 
@@ -163,9 +164,6 @@ case_list : case case_list
 		  ;
 
 case : CASE expr COLON stmt_list
-	    /*
-		Change the grammar in stmt_list to mimic for loops?
-		*/
 		{ $$ = stmt_create(STMT_CASE, 0, 0, $2, 0, $4, 0); }
 	 ;
 
@@ -316,9 +314,40 @@ type : STRING
 		{ $$ = type_create(TYPE_INTEGER, NULL, NULL); }
 	 | VOID
 		{ $$ = type_create(TYPE_VOID, NULL, NULL); }
-/*	 | FLOAT */
+	 | FLOAT 
+		{ $$ = type_create(TYPE_FLOAT, NULL, NULL); }
 	 ;
 
 %%
 
+/*  C Postamble Code */
+
 int yywrap() { return 0; }
+
+void strip_string_parse(char * s){
+    int len = strlen(s);
+    strip_quotes_parse(s);
+
+    int i;
+    for (i = 0; i < len; i++) {
+        if (s[i] == '\\'){
+            if (s[i+1] == 'n'){
+                s[i+1] = '\n';
+            }
+            else if (s[i+1] == '0'){
+                s[i+1] = '\0';
+            }
+            memmove(&s[i], &s[i+1], len - i); // remove leading backslash
+        }
+    }
+}
+
+void strip_quotes_parse(char * s) {
+    int len = strlen(s);
+    if(len > 0)
+        memmove(s, s+1, len); // rid first char
+    if(len > 1)
+        s[len - 2] = '\0'; // rid last char
+}
+
+

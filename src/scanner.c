@@ -2214,24 +2214,25 @@ extern int yydebug;
     BOOLEAN = 295,
     INTEGER = 296,
     VOID = 297,
-    IF = 298,
-    ELSE = 299,
-    FOR = 300,
-    WHILE = 301,
-    CASE = 302,
-    SWITCH = 303,
-    DEFAULT = 304,
-    RETURN = 305,
-    BREAK = 306,
-    END = 307,
-    TRUE = 308,
-    FALSE = 309,
-    PRINT = 310,
-    IDENTIFIER = 311,
-    STRING_LITERAL = 312,
-    INTEGER_LITERAL = 313,
-    FLOAT_LITERAL = 314,
-    TOKEN_ERROR = 315
+    FLOAT = 298,
+    IF = 299,
+    ELSE = 300,
+    FOR = 301,
+    WHILE = 302,
+    CASE = 303,
+    SWITCH = 304,
+    DEFAULT = 305,
+    RETURN = 306,
+    BREAK = 307,
+    END = 308,
+    TRUE = 309,
+    FALSE = 310,
+    PRINT = 311,
+    IDENTIFIER = 312,
+    STRING_LITERAL = 313,
+    INTEGER_LITERAL = 314,
+    FLOAT_LITERAL = 315,
+    TOKEN_ERROR = 316
   };
 #endif
 
@@ -2240,7 +2241,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 87 "parser.y" /* yacc.c:1909  */
+#line 88 "parser.y" /* yacc.c:1909  */
 
 	struct decl *decl;
 	struct stmt *stmt;
@@ -2248,7 +2249,7 @@ union YYSTYPE
 	struct type *type;
 	char *id;
 
-#line 123 "parser.tab.h" /* yacc.c:1909  */
+#line 124 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
