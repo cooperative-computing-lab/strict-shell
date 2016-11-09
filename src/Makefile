@@ -1,5 +1,5 @@
 CC=gcc
-OBJ= parser.tab.o scanner.o main.o stmt.o expr.o type.o 
+OBJ= parser.tab.o scanner.o main.o stmt.o decl.o expr.o type.o 
 
 all: stsh
 

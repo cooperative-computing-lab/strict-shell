@@ -1,0 +1,4 @@
+int $day = 35;
+
+[ firefox, $url ]
+

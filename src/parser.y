@@ -1,5 +1,6 @@
 %{
 #include "stmt.h"
+#include "decl.h"
 #include "type.h"
 #include "expr.h"
 #include <stdio.h>
@@ -109,19 +110,36 @@ program : stmt_list
 		  { program = $1; }
 		;
 decl_list : decl decl_list
-			{ $$ = $1; $1->next = $2; }
+			/*This isn't right. decls are statements*/
+			{ $$ = $1; $1->decl->next = $2; }
 		  |
 			{ $$ = 0; }
 		  ;
 
 decl : type id SEMICOLON /*used to be DOLLAR id, but changed regex in scanner*/
-		{ $$ = stmt_create(STMT_FOR, 0, 0, 0, 0, 0, 0); }
+		{ 
+			$$ = stmt_create(STMT_DECL, 
+							decl_create($2, $1, 0, 0, NULL), 
+							0, 0, 0, 0, 0); 
+		}
 	 | type id ASSIGN expr SEMICOLON
-		{ $$ = stmt_create(STMT_FOR, 0, 0, 0, 0, 0, 0); }
+		{ 
+			$$ = stmt_create(STMT_DECL, 
+							decl_create(0,0,0,0,0), 
+							0, 0, 0, 0, 0);
+		}
 	 | type id L_PAREN decl_list R_PAREN stmt_list END
-		{ $$ = stmt_create(STMT_FOR, 0, 0, 0, 0, 0, 0); }
+		{ 
+			$$ = stmt_create(STMT_DECL, 
+							decl_create(0,0,0,0,0), 
+							0, 0, 0, 0, 0);
+		}
 	 | type id L_BRACE real_expr_block R_BRACE SEMICOLON
-		{ $$ = stmt_create(STMT_FOR, 0, 0, 0, 0, 0, 0); }
+		{ 
+			$$ = stmt_create(STMT_DECL, 
+							decl_create(0,0,0,0,0), 
+							0, 0, 0, 0, 0);
+		}
 	 ;
 
 id : IDENTIFIER
