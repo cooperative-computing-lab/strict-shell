@@ -1,6 +1,7 @@
 #include "expr.h"
 #include "type.h"
 #include <string.h>
+#include <math.h>
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right ) {
 	struct expr * new_expr = malloc(sizeof * new_expr);
@@ -153,8 +154,17 @@ void expr_print( struct expr *e ) {
 		case EXPR_ARR:	
 			printf("["); 
 			break;
+		case EXPR_ARR_LIST:
+			if (e->right) printf("][");
+			break;
 		case EXPR_FUNCT:	
 			printf("("); 
+			break;
+		/*case EXPR_GROUP:
+			printf("(");
+			break;*/
+		case EXPR_BLOCK:
+			printf("{");
 			break;
 		case EXPR_BOOL:	
 			if (e->literal_value == 1) {
@@ -169,6 +179,9 @@ void expr_print( struct expr *e ) {
 		case EXPR_INT:	
 			printf("%d", e->literal_value); 
 			break;
+		case EXPR_FLOAT:	
+			printf("%f", e->literal_value); 
+			break;
 		case EXPR_CHAR:	
 			printf("'%c'", e->literal_value); 
 			break;
@@ -180,12 +193,6 @@ void expr_print( struct expr *e ) {
 		case EXPR_LIST:	
 			if (e->right) printf(", ");
 			break;
-		case EXPR_BLOCK:
-			printf("{");
-			break;
-		case EXPR_ARR_LIST:
-			if (e->right) printf("][");
-			break;
 	}
 	expr_print(e->right);
 
@@ -194,4 +201,54 @@ void expr_print( struct expr *e ) {
 	if (e->kind == EXPR_ARR) printf("]"); 
 	if (e->kind == EXPR_GROUP) printf(")");
 }
+
+/*
+Recursively evaluate an expression by performing
+the desired operation and returning it up the tree.
+*/
+double expr_evaluate( struct expr *e )
+{
+	if(!e) return 0;
+
+	double l = expr_evaluate(e->left);
+	double r = expr_evaluate(e->right);
+
+	switch(e->kind) {
+		case EXPR_ADD:
+			return l+r;
+		case EXPR_SUB:
+			return l-r;
+		case EXPR_MUL:
+			return l*r;
+		case EXPR_DIV:
+			if(r==0) {
+				printf("runtime error: divide by zero\n");
+				exit(1);
+			}
+			return l/r;	
+		case EXPR_EXP:
+			// error check?
+			return pow(l, r);
+		case EXPR_MOD:
+			return l%r;
+
+		case EXPR_BOOL:
+			break;
+		case EXPR_NAME:
+			break;
+		case EXPR_INT:
+			break;
+		case EXPR_FLOAT:
+			break;
+		case EXPR_CHAR:
+			break;
+		case EXPR_STR:
+			break;
+	}
+
+	return 0;
+}
+
+
+
 

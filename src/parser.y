@@ -110,7 +110,6 @@ program : stmt_list
 		  { program = $1; }
 		;
 decl_list : decl decl_list
-			/*This isn't right. decls are statements*/
 			{ $$ = $1; $1->decl->next = $2; }
 		  |
 			{ $$ = 0; }
@@ -125,19 +124,28 @@ decl : type id SEMICOLON /*used to be DOLLAR id, but changed regex in scanner*/
 	 | type id ASSIGN expr SEMICOLON
 		{ 
 			$$ = stmt_create(STMT_DECL, 
-							decl_create(0,0,0,0,0), 
+							decl_create($2, $1, $4, 0, NULL), 
 							0, 0, 0, 0, 0);
 		}
 	 | type id L_PAREN decl_list R_PAREN stmt_list END
 		{ 
+			// what about $4? the params
 			$$ = stmt_create(STMT_DECL, 
-							decl_create(0,0,0,0,0), 
+							decl_create($2, $1, 0, $6, NULL), 
 							0, 0, 0, 0, 0);
 		}
 	 | type id L_BRACE real_expr_block R_BRACE SEMICOLON
 		{ 
+			// what about the parameters? $4
 			$$ = stmt_create(STMT_DECL, 
-							decl_create(0,0,0,0,0), 
+							decl_create($2, $1, 0, 0, NULL), 
+							0, 0, 0, 0, 0);
+		}
+	 | type id L_BRACE real_expr_block R_BRACE ASSIGN real_expr_block SEMICOLON
+		{ 
+			// what about the parameters? and code?
+			$$ = stmt_create(STMT_DECL, 
+							decl_create($2, $1, 0, 0, NULL), 
 							0, 0, 0, 0, 0);
 		}
 	 ;
