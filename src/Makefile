@@ -4,10 +4,10 @@ OBJ= parser.tab.o scanner.o main.o stmt.o decl.o expr.o type.o
 all: stsh
 
 stsh: $(OBJ)
-	$(CC) $^ -o $@
+	$(CC) $^ -o $@ -lm
 
 %.o: %.c %.h
-	$(CC) -c $< -o $@
+	$(CC) -c $< -o $@ -lm
 
 scanner.c: scanner.flex parser.tab.h
 	flex --outfile=$@ $^

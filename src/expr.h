@@ -1,7 +1,6 @@
 #ifndef EXPR_H
 #define EXPR_H
 
-#include <stdio.h>
 #include <stdlib.h>
 
 typedef enum {
@@ -44,6 +43,15 @@ typedef enum {
 	EXPR_LIST
 } expr_t;
 
+typedef enum {
+	VAL_INT,
+	VAL_BOOL,
+	VAL_FLOAT,
+	VAL_CHAR,
+	VAL_STR
+} value_t;
+
+
 struct expr {
 	/* used by all kinds of exprs */
 	expr_t kind;
@@ -54,7 +62,18 @@ struct expr {
 	const char *name;
 	struct symbol *symbol;
 	int literal_value;
+	float float_literal;
 	const char * string_literal;
+};
+
+struct value {
+	value_t kind;
+	int value_int;
+	int value_bool; // TODO: error check value
+	float value_float;
+	char value_char;
+	char * value_str;
+
 };
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right );
@@ -67,6 +86,13 @@ struct expr * expr_create_character_literal( int c );
 struct expr * expr_create_string_literal( const char *str );
 
 void expr_print( struct expr *e );
-double  expr_evaluate( struct expr *e );
+
+struct value * expr_evaluate( struct expr *e );
+struct value * expr_eval_add(struct value * new_val, struct value * l, struct value * r);
+struct value * expr_eval_sub(struct value * new_val, struct value * l, struct value * r);
+struct value * expr_eval_mul(struct value * new_val, struct value * l, struct value * r);
+struct value * expr_eval_div(struct value * new_val, struct value * l, struct value * r);
+struct value * expr_eval_exp(struct value * new_val, struct value * l, struct value * r);
+struct value * expr_eval_mod(struct value * new_val, struct value * l, struct value * r);
 
 #endif
