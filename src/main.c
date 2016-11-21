@@ -5,86 +5,29 @@
  */
 
 #include "parser.tab.h"
+#include "stmt.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 extern int yyparse();
 extern int yylex();
+extern struct stmt * program;
 
-int scan (char * file);
-int parse (char * file);
+int parse ();
 void strip_string(char * s);
 void strip_quotes(char * s);
 
 int main(int argc, char *argv[]) {
-	if (argc < 2) {
-		fprintf(stderr, "ERROR: not enough arguments\n");
+	if (argc > 1) {
+		fprintf(stderr, "ERROR: too many arguments\n");
 		exit(1);
 	} 
-	scan(argv[1]);
-	parse(argv[1]);
+	return parse();
 }
 
-int scan(char* file) {
-	extern FILE *yyin;
-	extern int yylex();
-	extern char *yytext;
-	
-	yyin = fopen(file, "r");
+int parse(){
 
-	if(!yyin) {
-		fprintf(stderr, "ERROR: could not open %s\n", file);
-		exit(1);
-	}
-
-	while(1) {
-		//token_t t = yylex();
-		enum yytokentype t = yylex();
-		/*
-		if (t == TOKEN_EOF) {
-			break;
-		}
-		else if (t == TOKEN_ERROR){
-			fprintf(stderr, "ERROR: %s is an invalid token\n", yytext);
-			exit(1);
-		} 
-		else if (t == INTEGER_LITERAL || t == FLOAT_LITERAL) {
-			printf("%s %s\n", str_token_t(t), yytext);
-		}
-		else if (t == STRING_LITERAL) {
-			if (strlen(yytext) > 255) { // null terminator
-				fprintf(stderr, "ERROR: string literal is too long\n");
-				exit(1);
-			} else {
-				strip_string(yytext);
-				printf("%s %s\n", str_token_t(t), yytext);
-			}
-		}
-		else if (t == IDENTIFIER ) {
-			if (strlen(yytext) > 256) {
-				fprintf(stderr, "ERROR: indentifier is too long\n");
-				exit(1);
-			} else {
-				printf("%s %s\n", str_token_t(t), yytext);
-			}
-		}	
-		else {
-			printf("%s\n", str_token_t(t));
-		}*/
-	}
-	return 0;
-}
-
-int parse( char * file){
-	extern FILE * yyin;
-	extern char * yytext;
-
-	yyin = fopen(file, "r");
-	if( !yyin ){
-		fprintf(stderr, "ERROR: invalid file");
-		exit(1);
-	}
 	if( yyparse() == 0 ){
 		printf("Parse successful!");
 		return 0;

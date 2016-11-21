@@ -37,8 +37,8 @@ LETTER [a-zA-Z]
 
 \$									{ return DOLLAR; }
 =									{ return ASSIGN; }
-:									{ return COLON; }
-;									{ return SEMICOLON; }
+\:									{ return COLON; }
+\;									{ return SEMICOLON; }
 ,									{ return COMMA; }
 \.									{ return DOT; }
 

@@ -5,3 +5,4 @@ parser.tab.*
 *.output
 *.a
 *.gz
+stsh
