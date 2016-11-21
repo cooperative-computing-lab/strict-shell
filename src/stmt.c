@@ -15,6 +15,7 @@ struct stmt * stmt_create( stmt_kind_t kind, struct decl *d, struct expr *init_e
 }
 
 void stmt_print ( struct stmt * s, int indent ){
+	if (!s) return;
 	int i = indent;
 	switch (s->kind) {
 		case STMT_DECL:
