@@ -117,7 +117,7 @@ decl_list : real_decl_list
 		  ;
 
 real_decl_list : decl COMMA decl_list
-				 { $$ = $1; $1->next = $3; }
+				 { $$ = $1; $1->decl->next = $3; }
 			   | decl
 				 { $$ = $1; }
 			   ;
@@ -125,20 +125,20 @@ real_decl_list : decl COMMA decl_list
 decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
 		{ 
 			$$ = stmt_create(STMT_DECL, 
-							decl_create($2, $1, 0, 0, NULL), 
+							decl_create($2, $1, 0, 0, 0, NULL), 
 							0, 0, 0, 0, 0); 
 		}
 	 | type id ASSIGN expr
 		{ 
 			$$ = stmt_create(STMT_DECL, 
-							decl_create($2, $1, $4, 0, NULL), 
+							decl_create($2, $1, $4, 0, 0, NULL), 
 							0, 0, 0, 0, 0);
 		}
 	 | type id L_PAREN decl_list R_PAREN L_BRACE stmt_list R_BRACE
 		{ 
 			// what about $4? the params
 			$$ = stmt_create(STMT_DECL, 
-							decl_create($2, $1, 0, $7, NULL), 
+							decl_create($2, $1, 0, $4, $7, NULL), 
 							0, 0, 0, 0, 0);
 		}
 	 
@@ -146,7 +146,7 @@ decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
 		{ 
 			// what about the parameters? $4
 			$$ = stmt_create(STMT_DECL, 
-							decl_create($2, $1, 0, 0, NULL), 
+							decl_create($2, $1, 0, 0, 0, NULL), 
 							0, 0, 0, 0, 0);
 		}
 	/* | type id L_BRACKET expr_list R_BRACKET ASSIGN 

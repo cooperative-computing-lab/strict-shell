@@ -19,7 +19,7 @@ void stmt_print ( struct stmt * s, int indent ){
 	int i = indent;
 	switch (s->kind) {
 		case STMT_DECL:
-			decl_print(s->decl, indent);
+			decl_print(s->decl, indent, 0);
 			break;
 		case STMT_EXPR:
 			for(; i > 0; --i) printf("\t");
