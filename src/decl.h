@@ -13,11 +13,11 @@ struct decl {
 	struct expr *value;
 	struct stmt *code;
 	struct symbol *symbol;
-	struct stmt *next;
+	struct decl *next;
 };
 
-struct decl * decl_create( char *name, struct type *t, struct expr *v, struct stmt *c, struct stmt *next );
-
+struct decl * decl_create( char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next);
+void decl_print( struct decl *d, int indent );
 #endif
 
 

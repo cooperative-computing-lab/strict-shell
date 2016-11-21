@@ -29,10 +29,11 @@ int main(int argc, char *argv[]) {
 int parse(){
 
 	if( yyparse() == 0 ){
-		printf("Parse successful!");
+		printf("Parse successful!\n");
+		stmt_print(program, 0);
 		return 0;
 	} else {
-		printf("Parse failed");
+		printf("Parse failed\n");
 		return 1;
 	}
 }

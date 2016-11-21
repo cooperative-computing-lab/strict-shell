@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
-struct decl * decl_create( char *name, struct type *t, struct expr *v, struct stmt *c, struct stmt *next ) {
+struct decl * decl_create( char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
 	struct decl * new_decl = malloc(sizeof *new_decl);
 	new_decl -> name = name;
 	new_decl -> type = t; 
@@ -14,3 +14,25 @@ struct decl * decl_create( char *name, struct type *t, struct expr *v, struct st
 }
 
 
+void decl_print( struct decl *d, int indent ){
+	int i = indent;
+	if (!d) return;
+	for(; i>0; i--) printf("\t");
+
+	type_print(d->type);
+	printf(" %s ", d->name);
+	
+	if (d->code) {
+		printf("{\n");
+		stmt_print(d->code, indent+1);
+		printf("\n}\n");
+	} else if (d->value) {
+		 printf("= ");
+		 expr_print(d->value);
+		 printf(";\n");
+	} else {
+		printf(";\n");
+	}
+	if (!(d->next)) return;
+	else decl_print(d->next, indent);
+}

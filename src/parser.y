@@ -96,7 +96,7 @@ void strip_quotes_parse(char * s);
 
 %start program 
 
-%type <stmt> program decl decl_list stmt stmt_list case case_list
+%type <stmt> program decl decl_list real_decl_list stmt stmt_list case case_list
 %type <expr> expr expr_list expr_or_nothing real_expr_list or_expr and_expr expr_compare       add_expr mul_expr exp_expr un_expr incr_expr expr_group /*expr_block real_expr_block*/ atomic
 %type <type> type
 %type <id> id
@@ -109,11 +109,18 @@ void strip_quotes_parse(char * s);
 program : stmt SEMICOLON
 		  { program = $1; return 0;}
 		;
-decl_list : decl COMMA decl_list
-			{ $$ = $1; $1->decl->next = $3; }
-		  |
-			{ $$ = 0; }
+
+decl_list : real_decl_list
+			{$$ = $1;}
+		  | /* nothing */
+			{$$ = 0;}
 		  ;
+
+real_decl_list : decl COMMA decl_list
+				 { $$ = $1; $1->next = $3; }
+			   | decl
+				 { $$ = $1; }
+			   ;
 
 decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
 		{ 

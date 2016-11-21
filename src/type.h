@@ -2,6 +2,7 @@
 #define TYPE_H
 
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef enum {
 	TYPE_BOOLEAN,
@@ -22,6 +23,6 @@ struct type {
 };
 
 struct type * type_create( type_kind_t kind, struct param_list *params, struct type *subtype);
-
+void type_print( struct type *t);
 
 #endif
