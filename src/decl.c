@@ -1,9 +1,10 @@
 #include "decl.h"
 #include "expr.h"
+#include "param_list.h"
 #include <string.h>
 #include <stdio.h>
 
-struct decl * decl_create( char *name, struct type *t, struct expr *v, struct stmt *p, struct stmt *c, struct stmt *next) {
+struct decl * decl_create( char *name, struct type *t, struct expr *v, struct decl *p, struct stmt *c, struct decl *next) {
 	struct decl * new_decl = malloc(sizeof *new_decl);
 	new_decl -> name = name;
 	new_decl -> type = t; 
@@ -25,7 +26,7 @@ void decl_print( struct decl *d, int indent, int param){
 
 	if (d->params) {
 		printf("(");
-		decl_print(d->params->decl, 0, 1);
+		decl_print(d->params, 0, 1);
 		printf(")");
 	}
 	if (d->code) {
@@ -44,6 +45,6 @@ void decl_print( struct decl *d, int indent, int param){
 	if (!d->next) return;
 	else {
 		if (param) printf(", ");
-		decl_print(d->next->decl, indent, param);
+		decl_print(d->next, indent, param);
 	}
 }

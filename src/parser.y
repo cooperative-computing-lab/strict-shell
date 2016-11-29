@@ -96,7 +96,8 @@ void strip_quotes_parse(char * s);
 
 %start program 
 
-%type <stmt> program decl decl_list real_decl_list stmt stmt_list case case_list
+%type <stmt> program stmt stmt_list case case_list
+%type <decl> decl decl_list real_decl_list
 %type <expr> expr expr_list expr_or_nothing real_expr_list or_expr and_expr expr_compare       add_expr mul_expr exp_expr un_expr incr_expr expr_group /*expr_block real_expr_block*/ atomic
 %type <type> type
 %type <id> id
@@ -117,37 +118,29 @@ decl_list : real_decl_list
 		  ;
 
 real_decl_list : decl COMMA decl_list
-				 { $$ = $1; $1->decl->next = $3; }
+				 { $$ = $1; $1->next = $3; }
 			   | decl
 				 { $$ = $1; }
 			   ;
 
 decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
 		{ 
-			$$ = stmt_create(STMT_DECL, 
-							decl_create($2, $1, 0, 0, 0, NULL), 
-							0, 0, 0, 0, 0); 
+			$$ = decl_create($2, $1, 0, 0, 0, NULL); 
 		}
 	 | type id ASSIGN expr
 		{ 
-			$$ = stmt_create(STMT_DECL, 
-							decl_create($2, $1, $4, 0, 0, NULL), 
-							0, 0, 0, 0, 0);
+			$$ = decl_create($2, $1, $4, 0, 0, NULL); 
 		}
 	 | type id L_PAREN decl_list R_PAREN L_BRACE stmt_list R_BRACE
 		{ 
 			// what about $4? the params
-			$$ = stmt_create(STMT_DECL, 
-							decl_create($2, $1, 0, $4, $7, NULL), 
-							0, 0, 0, 0, 0);
+			$$ = decl_create($2, $1, 0, $4, $7, NULL); 
 		}
 	 
 	 | type id L_BRACKET expr_list R_BRACKET
 		{ 
 			// what about the parameters? $4
-			$$ = stmt_create(STMT_DECL, 
-							decl_create($2, $1, 0, 0, 0, NULL), 
-							0, 0, 0, 0, 0);
+			$$ = decl_create($2, $1, 0, 0, 0, NULL); 
 		}
 	/* | type id L_BRACKET expr_list R_BRACKET ASSIGN 
 		{ 
@@ -169,7 +162,7 @@ stmt_list : stmt stmt_list
 		  ;
 
 stmt : decl SEMICOLON
-		{ $$ = $1; }
+		{ $$ = stmt_create(STMT_DECL, $1, 0, 0, 0, 0, 0); }
 	 | FOR L_PAREN expr_or_nothing SEMICOLON expr_or_nothing SEMICOLON expr_or_nothing R_PAREN stmt_list END SEMICOLON
 		{ $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0); }
 	 | RETURN expr SEMICOLON
