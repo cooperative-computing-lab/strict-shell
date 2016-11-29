@@ -106,7 +106,7 @@ void strip_quotes_parse(char * s);
 /*precedence*/
 
 %%
-program : stmt SEMICOLON
+program : stmt
 		  { program = $1; return 0;}
 		;
 
@@ -162,31 +162,31 @@ id : IDENTIFIER
 			 { $$ = strdup(yytext); }
 		   ;
 	 
-stmt_list : stmt SEMICOLON stmt_list
-			{ $$ = $1; $1->next = $3; }
+stmt_list : stmt stmt_list
+			{ $$ = $1; $1->next = $2; }
 		  |
 			{ $$ = 0; }
 		  ;
 
-stmt : decl
+stmt : decl SEMICOLON
 		{ $$ = $1; }
-	 | FOR L_PAREN expr_or_nothing SEMICOLON expr_or_nothing SEMICOLON expr_or_nothing R_PAREN stmt_list END
+	 | FOR L_PAREN expr_or_nothing SEMICOLON expr_or_nothing SEMICOLON expr_or_nothing R_PAREN stmt_list END SEMICOLON
 		{ $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0); }
-	 | RETURN expr
+	 | RETURN expr SEMICOLON
 		{ $$ = stmt_create(STMT_RETURN, 0, 0, $2, 0, 0, 0); }
-	 | IF L_PAREN expr R_PAREN stmt_list END
+	 | IF L_PAREN expr R_PAREN stmt_list END SEMICOLON
 		{ $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, 0); }
-	 | IF L_PAREN expr R_PAREN stmt_list ELSE stmt_list END
+	 | IF L_PAREN expr R_PAREN stmt_list ELSE stmt_list END SEMICOLON
 		{ $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7); } 
-	 | expr
+	 | expr SEMICOLON
 		{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0); }
-	 | PRINT expr_list
+	 | PRINT expr_list SEMICOLON
 		{ $$ = stmt_create(STMT_PRINT, 0, 0, $2, 0, 0, 0); }
-	 | SWITCH L_PAREN expr R_PAREN case_list END
+	 | SWITCH L_PAREN expr R_PAREN case_list END SEMICOLON
 		{ $$ = stmt_create(STMT_SWITCH, 0, 0, $3, 0, $5, 0); }
-	 | WHILE L_PAREN expr R_PAREN stmt_list END
+	 | WHILE L_PAREN expr R_PAREN stmt_list END SEMICOLON
 		{ $$ = stmt_create(STMT_WHILE, 0, 0, $3, 0, $5, 0); }
-	 | BREAK
+	 | BREAK SEMICOLON
 		{ $$ = stmt_create(STMT_BREAK, 0, 0, 0, 0, 0, 0); }
 	 ;
 
