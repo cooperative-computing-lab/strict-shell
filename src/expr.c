@@ -319,7 +319,7 @@ struct value * expr_eval_add( struct value * new_val, struct value * l, struct v
 		printf("runtime error: addition on boolean type\n");
 		exit(1);
 	} else if (kind == VAL_FLOAT) {
-		new_val->value_float == l->value_float+r->value_float;
+		new_val->value_float = l->value_float+r->value_float;
 	} else if (kind == VAL_CHAR) {
 		new_val->value_char = l->value_char+r->value_char;
 	} else if (kind == VAL_STR) {
@@ -351,7 +351,7 @@ struct value * expr_eval_sub( struct value * new_val, struct value * l, struct v
 		printf("runtime error: subtraction on boolean type\n");
 		exit(1);
 	} else if (kind == VAL_FLOAT) {
-		new_val->value_float == l->value_float-r->value_float;
+		new_val->value_float = l->value_float-r->value_float;
 	} else if (kind == VAL_CHAR) {
 		new_val->value_char = l->value_char-r->value_char;
 	} else if (kind == VAL_STR) {
@@ -373,7 +373,7 @@ struct value * expr_eval_mul( struct value * new_val, struct value * l, struct v
 		// essentially an AND op 
 		new_val->value_bool = l->value_bool*r->value_bool;		
 	} else if (kind == VAL_FLOAT) {
-		new_val->value_float == l->value_float*r->value_float;
+		new_val->value_float = l->value_float*r->value_float;
 	} else if (kind == VAL_CHAR) {
 		new_val->value_char = l->value_char*r->value_char;
 	} else if (kind == VAL_STR) {
@@ -395,7 +395,7 @@ struct value * expr_eval_div( struct value * new_val, struct value * l, struct v
 		printf("runtime error: division on boolean type\n");
 		exit(1);
 	} else if (kind == VAL_FLOAT) {
-		new_val->value_float == l->value_float/r->value_float;
+		new_val->value_float = l->value_float/r->value_float;
 	} else if (kind == VAL_CHAR) {
 		new_val->value_char = l->value_char/r->value_char;
 	} else if (kind == VAL_STR) {
@@ -418,7 +418,7 @@ struct value * expr_eval_exp( struct value * new_val, struct value * l, struct v
 		printf("runtime error: exp on boolean type\n");
 		exit(1);
 	} else if (kind == VAL_FLOAT) {
-		new_val->value_float == pow(l->value_float, r->value_float);
+		new_val->value_float = pow(l->value_float, r->value_float);
 	} else if (kind == VAL_CHAR) {
 		new_val->value_char = pow(l->value_char, r->value_char);
 	} else if (kind == VAL_STR) {
