@@ -124,23 +124,24 @@ real_decl_list : decl COMMA decl_list
 			   ;
 
 decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
-		{ 
-			$$ = decl_create($2, $1, 0, 0, 0, NULL); 
+		{// param, subtype, expr 
+			$$ = decl_create($2, $1, 0, 0, 0, 0, 0, NULL); 
 		}
 	 | type id ASSIGN expr
 		{ 
-			$$ = decl_create($2, $1, $4, 0, 0, NULL); 
+			$$ = decl_create($2, $1, 0, 0, 0, $4, 0, NULL); 
 		}
 	 | type id L_PAREN decl_list R_PAREN L_BRACE stmt_list R_BRACE
 		{ 
 			// what about $4? the params
-			$$ = decl_create($2, $1, 0, $4, $7, NULL); 
+			// subtype is $1, since there is no explicit ARRAY type like cminor
+			$$ = decl_create($2, 0, $4, $1, 0, 0, $7, NULL); 
 		}
 	 
 	 | type id L_BRACKET expr_list R_BRACKET
 		{ 
-			// what about the parameters? $4
-			$$ = decl_create($2, $1, 0, 0, 0, NULL); 
+			// what about the array elems? $4
+			$$ = decl_create($2, 0, 0, $1, $4, 0, 0, NULL); 
 		}
 	/* | type id L_BRACKET expr_list R_BRACKET ASSIGN 
 		{ 
@@ -331,10 +332,9 @@ atomic : TRUE
 
 type : STRING 
 		{ $$ = type_create(TYPE_STRING, NULL, NULL); }
-	 | ARRAY 
-		/* TODO: fix this*/
+/*	 | ARRAY 
 		{ $$ = type_create(TYPE_ARRAY, NULL, NULL); }
-	 | BOOLEAN 
+*/   | BOOLEAN 
 		{ $$ = type_create(TYPE_BOOLEAN, NULL, NULL); }
 	 | INTEGER 
 		{ $$ = type_create(TYPE_INTEGER, NULL, NULL); }

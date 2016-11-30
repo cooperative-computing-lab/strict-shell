@@ -4,12 +4,14 @@
 #include <string.h>
 #include <stdio.h>
 
-struct decl * decl_create( char *name, struct type *t, struct expr *v, struct decl *p, struct stmt *c, struct decl *next) {
+struct decl * decl_create( char *name, struct type *t, struct decl *p, struct type *st, struct expr *expr, struct expr *v,  struct stmt *c, struct decl *next){
 	struct decl * new_decl = malloc(sizeof *new_decl);
 	new_decl -> name = name;
 	new_decl -> type = t; 
-	new_decl -> value = v;
 	new_decl -> params = p;
+	new_decl -> subtype = st;
+	new_decl -> expr = expr;
+	new_decl -> value = v;
 	new_decl -> code = c;
 	new_decl -> next = next;
 	return new_decl;
