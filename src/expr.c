@@ -244,7 +244,7 @@ struct value * expr_evaluate( struct expr *e ) {
 			break;
 		case EXPR_SUB:
 			if (l->kind == r->kind){
-				return expr_eval_sub(new_val, l, r);
+				expr_eval_sub(l, r);
 			}
 			break;
 		case EXPR_MUL:
@@ -334,26 +334,23 @@ void expr_eval_add(struct value * l, struct value * r){
 	}
 }
 
-struct value * expr_eval_sub( struct value * new_val, struct value * l, struct value * r){
+void expr_eval_sub(struct value * l, struct value * r){
 	
 	value_t kind = l->kind;
-	new_val->kind = kind;
 
-	if (kind == EXPR_INT) {
-		new_val->value_int = l->value_int-r->value_int;		
-	} else if (kind == EXPR_BOOL) {
+	if (kind == VAL_INT) {
+		printf("%d", l->value_int-r->value_int);		
+	} else if (kind == VAL_BOOL) {
 		printf("runtime error: subtraction on boolean type\n");
 		exit(1);
-	} else if (kind == EXPR_FLOAT) {
-		new_val->value_float == l->value_float-r->value_float;
-	} else if (kind == EXPR_CHAR) {
-		new_val->value_char = l->value_char-r->value_char;
-	} else if (kind == EXPR_STR) {
+	} else if (kind == VAL_FLOAT) {
+		printf("%f", l->value_float-r->value_float);
+	} else if (kind == VAL_CHAR) {
+		printf("%c", l->value_char-r->value_char);
+	} else if (kind == VAL_STR) {
 		printf("runtime error: subtraction on string type\n");
 		exit(1);
 	}
-
-	return new_val;
 }
 
 struct value * expr_eval_mul( struct value * new_val, struct value * l, struct value * r){
