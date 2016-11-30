@@ -218,6 +218,7 @@ Recursively evaluate an expression by performing
 the desired operation and returning it up the tree.
 */
 struct value * expr_evaluate( struct expr *e ) {
+
 	if(!e) return 0;
 
 	struct value * l = expr_evaluate(e->left);
@@ -237,7 +238,8 @@ struct value * expr_evaluate( struct expr *e ) {
 	switch(e->kind) {
 		case EXPR_ADD:
 			if (l->kind == r->kind){
-				return expr_eval_add(new_val, l, r);
+				//printf("%d", l->value_int + r->value_int);
+				expr_eval_add(l, r);
 			}
 			break;
 		case EXPR_SUB:
@@ -304,31 +306,32 @@ struct value * expr_evaluate( struct expr *e ) {
 	return 0;
 }
 
-struct value * expr_eval_add( struct value * new_val, struct value * l, struct value * r){
+void expr_eval_add(struct value * l, struct value * r){
 
 	value_t kind = l->kind;
-	new_val->kind = kind;
 
-	if (kind == EXPR_INT) {
-		new_val->value_int = l->value_int+r->value_int;		
-	} else if (kind == EXPR_BOOL) {
+	if (kind == VAL_INT) {
+		printf("%d", l->value_int+r->value_int);		
+	} else if (kind == VAL_BOOL) {
 		printf("runtime error: addition on boolean type\n");
 		exit(1);
-	} else if (kind == EXPR_FLOAT) {
-		new_val->value_float == l->value_float+r->value_float;
-	} else if (kind == EXPR_CHAR) {
-		new_val->value_char = l->value_char+r->value_char;
-	} else if (kind == EXPR_STR) {
+	} else if (kind == VAL_FLOAT) {
+		printf("%f",l->value_float+r->value_float);
+	} else if (kind == VAL_CHAR) {
+		printf("%c", l->value_char+r->value_char);
+	} else if (kind == VAL_STR) {
 		/* return concatenation of two strings */
 		char * concat  = malloc(strlen(l->value_str)+strlen(r->value_str)+1);
 		strcpy(concat, l->value_str);
 		strcat(concat, r->value_str);
 		/* TODO */
 		// new_val->str
-		new_val->value_str = NULL;
+		printf("runtime error: unimplemented\n");
+		exit(1);
+	} else {
+		printf("runtime error: unimplemented\n");
+		exit(1);
 	}
-
-	return new_val;
 }
 
 struct value * expr_eval_sub( struct value * new_val, struct value * l, struct value * r){

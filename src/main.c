@@ -6,6 +6,8 @@
 
 #include "parser.tab.h"
 #include "stmt.h"
+#include "expr.h"
+#include "decl.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +33,7 @@ int parse(){
 	if( yyparse() == 0 ){
 		printf("Parse successful!\n");
 		stmt_print(program, 0);
+		stmt_evaluate(program);
 		return 0;
 	} else {
 		printf("Parse failed\n");

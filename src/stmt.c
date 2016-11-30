@@ -89,19 +89,39 @@ the desired operation and returning it up the tree.
 void stmt_evaluate( struct stmt *s ) {
 	if(!s) return;
 
-	struct value * v = expr_evaluate(s->expr);
-
+	struct value * v = malloc(sizeof * v);
+	
 	switch(s->kind) {
+		case STMT_DECL:
+			break;
+		case STMT_EXPR:
+			expr_evaluate(s->expr);
+			break;
 		case STMT_IF_ELSE:
+			v = expr_evaluate(s->expr);
 			if (v->kind == VAL_BOOL && v->value_bool > 0) {
 				stmt_evaluate(s->body);
 			} else {
 				stmt_evaluate(s->else_body);
 			}
 			// error check, check other types
-		case STMT_DECL:
-			break;
 		case STMT_FOR:
+			break;
+		case STMT_WHILE:
+			break;
+		case STMT_PRINT:
+			break;
+		case STMT_RETURN:
+			break;
+		case STMT_BLOCK:
+			break;
+		case STMT_CASE:
+			break;
+		case STMT_SWITCH:
+			break;
+		case STMT_BREAK:
+			break;
+		case STMT_EMPTY:
 			break;
 
 	}

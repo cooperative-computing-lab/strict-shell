@@ -88,7 +88,7 @@ struct expr * expr_create_string_literal( const char *str );
 void expr_print( struct expr *e );
 
 struct value * expr_evaluate( struct expr *e );
-struct value * expr_eval_add(struct value * new_val, struct value * l, struct value * r);
+void expr_eval_add(struct value * l, struct value * r);
 struct value * expr_eval_sub(struct value * new_val, struct value * l, struct value * r);
 struct value * expr_eval_mul(struct value * new_val, struct value * l, struct value * r);
 struct value * expr_eval_div(struct value * new_val, struct value * l, struct value * r);
