@@ -239,12 +239,13 @@ struct value * expr_evaluate( struct expr *e ) {
 		case EXPR_ADD:
 			if (l->kind == r->kind){
 				//printf("%d", l->value_int + r->value_int);
-				expr_eval_add(l, r);
+				//printf("%d", (expr_eval_add(new_val, l, r))->value_int);
+				return expr_eval_add(new_val, l, r);
 			}
 			break;
 		case EXPR_SUB:
 			if (l->kind == r->kind){
-				expr_eval_sub(l, r);
+				return expr_eval_sub(new_val, l, r);
 			}
 			break;
 		case EXPR_MUL:
@@ -306,19 +307,21 @@ struct value * expr_evaluate( struct expr *e ) {
 	return 0;
 }
 
-void expr_eval_add(struct value * l, struct value * r){
+struct value * expr_eval_add( struct value * new_val, struct value * l, struct value * r){
 
 	value_t kind = l->kind;
+	new_val->kind = kind;
 
 	if (kind == VAL_INT) {
-		printf("%d", l->value_int+r->value_int);		
+
+		new_val->value_int = l->value_int+r->value_int;		
 	} else if (kind == VAL_BOOL) {
 		printf("runtime error: addition on boolean type\n");
 		exit(1);
 	} else if (kind == VAL_FLOAT) {
-		printf("%f",l->value_float+r->value_float);
+		new_val->value_float == l->value_float+r->value_float;
 	} else if (kind == VAL_CHAR) {
-		printf("%c", l->value_char+r->value_char);
+		new_val->value_char = l->value_char+r->value_char;
 	} else if (kind == VAL_STR) {
 		/* return concatenation of two strings */
 		char * concat  = malloc(strlen(l->value_str)+strlen(r->value_str)+1);
@@ -326,31 +329,37 @@ void expr_eval_add(struct value * l, struct value * r){
 		strcat(concat, r->value_str);
 		/* TODO */
 		// new_val->str
+		new_val->value_str = NULL;
 		printf("runtime error: unimplemented\n");
 		exit(1);
 	} else {
 		printf("runtime error: unimplemented\n");
 		exit(1);
 	}
+
+	return new_val;
 }
 
-void expr_eval_sub(struct value * l, struct value * r){
+struct value * expr_eval_sub( struct value * new_val, struct value * l, struct value * r){
 	
 	value_t kind = l->kind;
+	new_val->kind = kind;
 
 	if (kind == VAL_INT) {
-		printf("%d", l->value_int-r->value_int);		
+		new_val->value_int = l->value_int-r->value_int;		
 	} else if (kind == VAL_BOOL) {
 		printf("runtime error: subtraction on boolean type\n");
 		exit(1);
 	} else if (kind == VAL_FLOAT) {
-		printf("%f", l->value_float-r->value_float);
+		new_val->value_float == l->value_float-r->value_float;
 	} else if (kind == VAL_CHAR) {
-		printf("%c", l->value_char-r->value_char);
+		new_val->value_char = l->value_char-r->value_char;
 	} else if (kind == VAL_STR) {
 		printf("runtime error: subtraction on string type\n");
 		exit(1);
 	}
+
+	return new_val;
 }
 
 struct value * expr_eval_mul( struct value * new_val, struct value * l, struct value * r){
@@ -358,16 +367,16 @@ struct value * expr_eval_mul( struct value * new_val, struct value * l, struct v
 	value_t kind = l->kind;
 	new_val->kind = kind;
 
-	if (kind == EXPR_INT) {
+	if (kind == VAL_INT) {
 		new_val->value_int = l->value_int*r->value_int;		
-	} else if (kind == EXPR_BOOL) {
+	} else if (kind == VAL_BOOL) {
 		// essentially an AND op 
 		new_val->value_bool = l->value_bool*r->value_bool;		
-	} else if (kind == EXPR_FLOAT) {
+	} else if (kind == VAL_FLOAT) {
 		new_val->value_float == l->value_float*r->value_float;
-	} else if (kind == EXPR_CHAR) {
+	} else if (kind == VAL_CHAR) {
 		new_val->value_char = l->value_char*r->value_char;
-	} else if (kind == EXPR_STR) {
+	} else if (kind == VAL_STR) {
 		printf("runtime error: multiplication on string type\n");
 		exit(1);
 	}
@@ -380,16 +389,16 @@ struct value * expr_eval_div( struct value * new_val, struct value * l, struct v
 	value_t kind = l->kind;
 	new_val->kind = kind;
 
-	if (kind == EXPR_INT) {
+	if (kind == VAL_INT) {
 		new_val->value_int = l->value_int/r->value_int;		
-	} else if (kind == EXPR_BOOL) {
+	} else if (kind == VAL_BOOL) {
 		printf("runtime error: division on boolean type\n");
 		exit(1);
-	} else if (kind == EXPR_FLOAT) {
+	} else if (kind == VAL_FLOAT) {
 		new_val->value_float == l->value_float/r->value_float;
-	} else if (kind == EXPR_CHAR) {
+	} else if (kind == VAL_CHAR) {
 		new_val->value_char = l->value_char/r->value_char;
-	} else if (kind == EXPR_STR) {
+	} else if (kind == VAL_STR) {
 		printf("runtime error: division on string type\n");
 		exit(1);
 	}
@@ -403,16 +412,16 @@ struct value * expr_eval_exp( struct value * new_val, struct value * l, struct v
 	value_t kind = l->kind;
 	new_val->kind = kind;
 
-	if (kind == EXPR_INT) {
+	if (kind == VAL_INT) {
 		new_val->value_int = pow(l->value_int, r->value_int);		
-	} else if (kind == EXPR_BOOL) {
+	} else if (kind == VAL_BOOL) {
 		printf("runtime error: exp on boolean type\n");
 		exit(1);
-	} else if (kind == EXPR_FLOAT) {
+	} else if (kind == VAL_FLOAT) {
 		new_val->value_float == pow(l->value_float, r->value_float);
-	} else if (kind == EXPR_CHAR) {
+	} else if (kind == VAL_CHAR) {
 		new_val->value_char = pow(l->value_char, r->value_char);
-	} else if (kind == EXPR_STR) {
+	} else if (kind == VAL_STR) {
 		printf("runtime error: exp on string type\n");
 		exit(1);
 	}
@@ -425,17 +434,17 @@ struct value * expr_eval_mod( struct value * new_val, struct value * l, struct v
 	value_t kind = l->kind;
 	new_val->kind = kind;
 
-	if (kind == EXPR_INT) {
+	if (kind == VAL_INT) {
 		new_val->value_int = l->value_int%r->value_int;		
-	} else if (kind == EXPR_BOOL) {
+	} else if (kind == VAL_BOOL) {
 		printf("runtime error: modulo on boolean type\n");
 		exit(1);
-	} else if (kind == EXPR_FLOAT) {
+	} else if (kind == VAL_FLOAT) {
 		printf("runtime error: modulo on float type\n");
 		exit(1);
-	} else if (kind == EXPR_CHAR) {
+	} else if (kind == VAL_CHAR) {
 		new_val->value_int = l->value_char%r->value_char;		
-	} else if (kind == EXPR_STR) {
+	} else if (kind == VAL_STR) {
 		printf("runtime error: modulo on string type\n");
 		exit(1);
 	}

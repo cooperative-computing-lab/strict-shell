@@ -95,7 +95,28 @@ void stmt_evaluate( struct stmt *s ) {
 		case STMT_DECL:
 			break;
 		case STMT_EXPR:
-			expr_evaluate(s->expr);
+			//printf("test");
+			v = expr_evaluate(s->expr);
+			switch (v->kind) {
+				case VAL_INT:
+					printf("%d", v->value_int);
+					break;
+				case VAL_FLOAT:
+					printf("%f", v->value_float);
+					break;
+				case VAL_BOOL:
+					printf("%d", v->value_bool);
+					break;
+				case VAL_CHAR:
+					printf("%c", v->value_char);
+					break;
+				case VAL_STR:
+					printf("ERROR: unimplemented");
+					exit(0);
+					break;
+
+			}
+
 			break;
 		case STMT_IF_ELSE:
 			v = expr_evaluate(s->expr);
