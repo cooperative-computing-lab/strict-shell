@@ -250,7 +250,7 @@ struct value * expr_evaluate( struct expr *e ) {
 			break;
 		case EXPR_MUL:
 			if (l->kind == r->kind){
-				return expr_eval_sub(new_val, l, r);
+				return expr_eval_mul(new_val, l, r);
 			}
 			break;
 		case EXPR_DIV:

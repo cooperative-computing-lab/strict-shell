@@ -33,7 +33,10 @@ int parse(){
 	if( yyparse() == 0 ){
 		printf("Parse successful!\n");
 		stmt_print(program, 0);
-		stmt_evaluate(program);
+		printf("\nEvaluates to: ");
+	   	stmt_evaluate(program);
+		printf("\n");
+
 		return 0;
 	} else {
 		printf("Parse failed\n");
