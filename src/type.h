@@ -17,12 +17,9 @@ typedef enum {
 
 struct type {
 	type_kind_t kind;
-	struct param_list *params;
-	struct type *subtype;
-	struct expr *expr;
 };
 
-struct type * type_create( type_kind_t kind, struct param_list *params, struct type *subtype);
+struct type * type_create( type_kind_t kind);
 void type_print( struct type *t);
 
 #endif

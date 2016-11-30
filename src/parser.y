@@ -135,13 +135,13 @@ decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
 		{ 
 			// what about $4? the params
 			// subtype is $1, since there is no explicit ARRAY type like cminor
-			$$ = decl_create($2, 0, $4, $1, 0, 0, $7, NULL); 
+			$$ = decl_create_func($2, 0, $4, $1, 0, 0, $7, NULL); 
 		}
 	 
 	 | type id L_BRACKET expr_list R_BRACKET
 		{ 
 			// what about the array elems? $4
-			$$ = decl_create($2, 0, 0, $1, $4, 0, 0, NULL); 
+			$$ = decl_create_array($2, 0, 0, $1, $4, 0, 0, NULL); 
 		}
 	/* | type id L_BRACKET expr_list R_BRACKET ASSIGN 
 		{ 
@@ -331,17 +331,17 @@ atomic : TRUE
 	   ;
 
 type : STRING 
-		{ $$ = type_create(TYPE_STRING, NULL, NULL); }
+		{ $$ = type_create(TYPE_STRING); }
 /*	 | ARRAY 
 		{ $$ = type_create(TYPE_ARRAY, NULL, NULL); }
 */   | BOOLEAN 
-		{ $$ = type_create(TYPE_BOOLEAN, NULL, NULL); }
+		{ $$ = type_create(TYPE_BOOLEAN); }
 	 | INTEGER 
-		{ $$ = type_create(TYPE_INTEGER, NULL, NULL); }
+		{ $$ = type_create(TYPE_INTEGER); }
 	 | VOID
-		{ $$ = type_create(TYPE_VOID, NULL, NULL); }
+		{ $$ = type_create(TYPE_VOID); }
 	 | FLOAT 
-		{ $$ = type_create(TYPE_FLOAT, NULL, NULL); }
+		{ $$ = type_create(TYPE_FLOAT); }
 	 ;
 
 %%
