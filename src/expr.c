@@ -194,7 +194,7 @@ void expr_print( struct expr *e ) {
 			printf("%f", e->float_literal); 
 			break;
 		case EXPR_CHAR:	
-			printf("'%c'", e->literal_value); 
+			printf("%d", e->literal_value); 
 			break;
 		case EXPR_STR:
 			for(int i = 0; i < strlen(e->string_literal); i++) {	
@@ -237,12 +237,8 @@ struct value * expr_evaluate( struct expr *e ) {
 
 	switch(e->kind) {
 		case EXPR_ADD:
-			if (l->kind == r->kind){
-				//printf("%d", l->value_int + r->value_int);
 				//printf("%d", (expr_eval_add(new_val, l, r))->value_int);
-				return expr_eval_add(new_val, l, r);
-			}
-			break;
+			return expr_eval_add(new_val, l, r);
 		case EXPR_SUB:
 			if (l->kind == r->kind){
 				return expr_eval_sub(new_val, l, r);
@@ -309,20 +305,20 @@ struct value * expr_evaluate( struct expr *e ) {
 
 struct value * expr_eval_add( struct value * new_val, struct value * l, struct value * r){
 
-	value_t kind = l->kind;
-	new_val->kind = kind;
+	value_t l_kind = l->kind;
+	value_t r_kind = r->kind;
+	new_val->kind = l_kind;
 
-	if (kind == VAL_INT) {
-
+	if (l_kind == VAL_INT && r_kind == VAL_INT) {
 		new_val->value_int = l->value_int+r->value_int;		
-	} else if (kind == VAL_BOOL) {
+	} else if (l_kind == VAL_BOOL || r_kind == VAL_BOOL) {
 		printf("runtime error: addition on boolean type\n");
 		exit(1);
-	} else if (kind == VAL_FLOAT) {
+	} else if (l_kind == VAL_FLOAT && r_kind == VAL_FLOAT) {
 		new_val->value_float = l->value_float+r->value_float;
-	} else if (kind == VAL_CHAR) {
+	} else if (l_kind == VAL_CHAR && r_kind == VAL_CHAR) {
 		new_val->value_char = l->value_char+r->value_char;
-	} else if (kind == VAL_STR) {
+	} else if (l_kind == VAL_STR || r_kind == VAL_STR) {
 		/* return concatenation of two strings */
 		char * concat  = malloc(strlen(l->value_str)+strlen(r->value_str)+1);
 		strcpy(concat, l->value_str);
@@ -332,6 +328,21 @@ struct value * expr_eval_add( struct value * new_val, struct value * l, struct v
 		new_val->value_str = NULL;
 		printf("runtime error: unimplemented\n");
 		exit(1);
+	} else if (l_kind == VAL_INT && r_kind == VAL_FLOAT) {
+		new_val->kind = r_kind;
+		new_val->value_float = l->value_int+r->value_float;
+	} else if (r_kind == VAL_INT && l_kind == VAL_FLOAT) {
+		new_val->value_float = l->value_float+r->value_int;
+	} else if (l_kind == VAL_CHAR && r_kind == VAL_FLOAT) {
+		new_val->kind = r_kind;
+		new_val->value_float = l->value_char+r->value_float;
+	} else if (r_kind == VAL_CHAR && l_kind == VAL_FLOAT) {
+		new_val->value_float = l->value_float+r->value_char;
+	} else if (l_kind == VAL_CHAR && r_kind == VAL_INT) {
+		new_val->kind = r_kind;
+		new_val->value_int = l->value_char+r->value_int;
+	} else if (r_kind == VAL_CHAR && l_kind == VAL_INT) {
+		new_val->value_int = l->value_int+r->value_char;
 	} else {
 		printf("runtime error: unimplemented\n");
 		exit(1);

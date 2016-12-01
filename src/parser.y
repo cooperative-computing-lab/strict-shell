@@ -82,6 +82,7 @@ void strip_quotes_parse(char * s);
 
 %token IDENTIFIER 
 %token STRING_LITERAL 
+%token CHAR_LITERAL 
 %token INTEGER_LITERAL 
 %token FLOAT_LITERAL 
 %token TOKEN_ERROR
@@ -322,6 +323,11 @@ atomic : TRUE
 			{ $$ = expr_create_name($1); }
 	   | STRING_LITERAL
 			{ $$ = expr_create_string_literal(strdup(yytext)); }
+	   | CHAR_LITERAL
+			{
+				strip_string_parse(yytext); 
+				$$ = expr_create_character_literal(*yytext); 
+			}
 	   | INTEGER_LITERAL 
 			{ $$ = expr_create_integer_literal(atoi(yytext)); }
 	   | FLOAT_LITERAL 

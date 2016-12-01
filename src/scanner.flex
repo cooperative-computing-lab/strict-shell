@@ -72,6 +72,7 @@ print								{ return PRINT; }
 
 \$({LETTER}|_)({LETTER}|_|{DIGIT})* { return IDENTIFIER; }
 \"(.)*\"							{ return STRING_LITERAL; }
+\'(.{1}|\\{LETTER}|\\0|\\\\)\'	{ return CHAR_LITERAL; }
 {DIGIT}+							{ return INTEGER_LITERAL; }
 {DIGIT}+\.({DIGIT}*)?				{ return FLOAT_LITERAL; }
 
