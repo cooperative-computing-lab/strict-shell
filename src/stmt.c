@@ -2,6 +2,8 @@
 #include "expr.h"
 #include "decl.h"
 
+extern int errors;
+
 struct stmt * stmt_create( stmt_kind_t kind, struct decl *d, struct expr *init_expr, struct expr *e, struct expr *next_expr, struct stmt *body, struct stmt *else_body ) {
 	struct stmt * new_stmt = malloc(sizeof * new_stmt);
 	new_stmt -> kind = kind;
@@ -95,9 +97,8 @@ void stmt_evaluate( struct stmt *s ) {
 		case STMT_DECL:
 			break;
 		case STMT_EXPR:
-			//printf("test");
 			v = expr_evaluate(s->expr);
-			switch (v->kind) {
+			/*switch (v->kind) {
 				case VAL_INT:
 					printf("%d", v->value_int);
 					break;
@@ -111,12 +112,10 @@ void stmt_evaluate( struct stmt *s ) {
 					printf("%c", v->value_char);
 					break;
 				case VAL_STR:
-					printf("ERROR: unimplemented");
-					exit(0);
+					fprintf(stderr, "ERROR: unimplemented");
+					exit(1);
 					break;
-
-			}
-
+			}*/
 			break;
 		case STMT_IF_ELSE:
 			v = expr_evaluate(s->expr);
@@ -129,6 +128,8 @@ void stmt_evaluate( struct stmt *s ) {
 		case STMT_FOR:
 			break;
 		case STMT_WHILE:
+			fprintf(stderr, "ERROR: unimplemented");
+			exit(1);
 			break;
 		case STMT_PRINT:
 			break;
@@ -137,8 +138,12 @@ void stmt_evaluate( struct stmt *s ) {
 		case STMT_BLOCK:
 			break;
 		case STMT_CASE:
+			fprintf(stderr, "ERROR: unimplemented");
+			exit(1);
 			break;
 		case STMT_SWITCH:
+			fprintf(stderr, "ERROR: unimplemented");
+			exit(1);
 			break;
 		case STMT_BREAK:
 			break;
@@ -146,7 +151,62 @@ void stmt_evaluate( struct stmt *s ) {
 			break;
 
 	}
+	stmt_evaluate(s->next);
 	return;
+}
+
+void stmt_resolve(struct stmt *s) {
+	if(!s) return;
+
+	switch(s->kind) {
+		case STMT_DECL:
+			decl_resolve(s->decl);
+			break;
+		case STMT_EXPR:
+			expr_resolve(s->expr);
+			break;
+		case STMT_IF_ELSE:
+			expr_resolve(s->expr);
+
+			scope_enter();
+			stmt_resolve(s->body);
+			scope_exit();
+
+			scope_enter();
+			stmt_resolve(s->else_body);
+			scope_exit();
+			break;
+		case STMT_FOR:
+			expr_resolve(s->init_expr);
+			expr_resolve(s->expr);
+			expr_resolve(s->next_expr);
+			stmt_resolve(s->body);
+			break;
+		case STMT_PRINT:
+			expr_resolve(s->expr);
+			break;
+		case STMT_RETURN:
+			expr_resolve(s->expr);
+			break;
+		case STMT_BLOCK:
+			scope_enter();
+			stmt_resolve(s->body);
+			scope_exit();
+			break;
+		case STMT_CASE:
+			fprintf(stderr, "ERROR: unimplemented");
+			exit(1);
+			break;
+		case STMT_SWITCH:
+			fprintf(stderr, "ERROR: unimplemented");
+			exit(1);
+			break;
+		case STMT_WHILE:
+			fprintf(stderr, "ERROR: unimplemented");
+			exit(1);
+			break;
+	}
+	stmt_resolve(s->next);
 }
 
 

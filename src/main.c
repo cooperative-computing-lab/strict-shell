@@ -8,6 +8,7 @@
 #include "stmt.h"
 #include "expr.h"
 #include "decl.h"
+#include "node.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,8 +16,10 @@
 extern int yyparse();
 extern int yylex();
 extern struct stmt * program;
+int errors;
 
 int parse ();
+int resolve();
 void strip_string(char * s);
 void strip_quotes(char * s);
 
@@ -25,7 +28,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "ERROR: too many arguments\n");
 		exit(1);
 	} 
-	return parse();
+	return resolve();
 }
 
 int parse(){
@@ -33,15 +36,29 @@ int parse(){
 	if( yyparse() == 0 ){
 		printf("Parse successful!\n");
 		stmt_print(program, 0);
-		printf("\nEvaluates to: ");
-	   	stmt_evaluate(program);
-		printf("\n");
+//		printf("\nEvaluates to: ");
+//	   	stmt_evaluate(program);
+//		printf("\n");
 
 		return 0;
 	} else {
 		printf("Parse failed\n");
 		return 1;
 	}
+}
+
+int resolve(){
+	if(yyparse() == 0){
+		head = 0;
+		scope_enter();
+		stmt_resolve(program);
+	 	scope_exit();
+		return 0;
+	} else {
+		return 1;
+		//exit(1);
+	}
+
 }
 
 void strip_string(char * s){

@@ -29,3 +29,13 @@ void type_print( struct type *t){
 			break;
 	}
 }
+
+struct type * type_copy(struct type *t) {
+	return type_create(t->kind);
+}
+
+int type_compare(struct type *t1, struct type *t2) {
+	if(!t1 || !t2) return 0;
+	return t1->kind == t2->kind;
+}
+

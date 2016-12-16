@@ -4,6 +4,8 @@
 #include <math.h>
 #include <stdio.h>
 
+extern int errors;
+
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right ) {
 	struct expr * new_expr = malloc(sizeof * new_expr);
 	new_expr -> kind = kind;
@@ -462,3 +464,24 @@ struct value * expr_eval_mod( struct value * new_val, struct value * l, struct v
 
 	return new_val;
 }
+
+void expr_resolve (struct expr *e) {
+	if(!e) return;
+
+	expr_resolve(e->left);
+	expr_resolve(e->right);
+
+	if (e->kind == EXPR_NAME) {
+		struct symbol *s = scope_lookup(e->name);
+		if (s) {
+			e->symbol = s;
+		} else {
+			fprintf(stderr, "ERROR: %s is undefined\n", e->name);
+			exit(1);
+		}
+	}
+}
+
+
+
+

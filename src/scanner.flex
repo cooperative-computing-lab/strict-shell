@@ -1,8 +1,5 @@
 %{
 #include "parser.tab.h"
-void yyerror (char const *s) {
-	fprintf (stderr, "%s\n", s);
-}
 %}
 DIGIT [0-9]
 LETTER [a-zA-Z]
@@ -78,3 +75,9 @@ print								{ return PRINT; }
 
 .									{ return TOKEN_ERROR; }
 %%
+void yyerror (char const *s) {
+	fprintf (stderr, "%s\n", s);
+}
+int yywrap () {
+	return 1;
+}

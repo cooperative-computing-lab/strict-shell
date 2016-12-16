@@ -108,7 +108,7 @@ void strip_quotes_parse(char * s);
 /*precedence*/
 
 %%
-program : stmt
+program : stmt_list
 		  { program = $1; return 0;}
 		;
 
@@ -353,8 +353,6 @@ type : STRING
 %%
 
 /*  C Postamble Code */
-
-int yywrap() { return 0; }
 
 void strip_string_parse(char * s){
     int len = strlen(s);

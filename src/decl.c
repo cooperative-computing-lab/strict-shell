@@ -1,8 +1,9 @@
 #include "decl.h"
 #include "expr.h"
-#include "param_list.h"
 #include <string.h>
 #include <stdio.h>
+
+extern int errors;
 
 struct decl * decl_create( char *name, struct type *t, struct decl *p, struct type *st, struct expr *expr, struct expr *v,  struct stmt *c, struct decl *next){
 	struct decl * new_decl = malloc(sizeof *new_decl);
@@ -99,3 +100,41 @@ void decl_print_elems(struct expr *e){
 	//decl_print_elems(e->next);
 
 }
+
+void decl_resolve(struct decl *d) {
+	if (!d) return;
+
+	if (scope_level() == 1) {
+		d->symbol = symbol_create(SYMBOL_GLOBAL, d->type, d->name);
+
+	} else {
+		// nonglobal functions
+		if (d->type->kind == TYPE_FUNCTION) {
+			fprintf(stderr, "ERROR: cannot declare non-global function %s\n", d->name);
+			exit(1);
+		} else { // local vars
+			d->symbol = symbol_create(SYMBOL_LOCAL, d->type, d->name);
+		}
+	}
+
+	// redeclarations
+	if(scope_lookup_local(d->name)) {
+		if(d->type->kind == TYPE_FUNCTION && scope_lookup_local(d->name)) { 
+		} else {
+			fprintf(stderr, "ERROR: cannot declare %s more than once\n", d->name);
+			exit(1);
+		}
+	}
+
+	// finish the decl
+	scope_bind(d->symbol->name, d->symbol);
+	expr_resolve(d->value);
+
+	if (d->code) {
+		scope_enter();
+		stmt_resolve(d->code);
+		scope_exit();
+	}
+	decl_resolve(d->next);
+}
+
