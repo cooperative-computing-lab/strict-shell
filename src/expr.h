@@ -99,5 +99,5 @@ struct value * expr_eval_exp(struct value * new_val, struct value * l, struct va
 struct value * expr_eval_mod(struct value * new_val, struct value * l, struct value * r);
 
 void expr_resolve(struct expr *e);
-//struct type * expr_typecheck(struct expr *e);
+struct type * expr_typecheck(struct expr *e);
 #endif

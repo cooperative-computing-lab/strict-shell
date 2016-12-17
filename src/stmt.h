@@ -7,6 +7,7 @@
 typedef enum {
 	STMT_DECL,
 	STMT_EXPR,
+	STMT_EXEC,
 	STMT_IF_ELSE,
 	STMT_FOR,
 	STMT_PRINT,
@@ -34,6 +35,6 @@ struct stmt * stmt_create(stmt_kind_t kind, struct decl *d, struct expr *init_ex
 void stmt_print (struct stmt * s, int indent);
 void stmt_evaluate(struct stmt *s);
 void stmt_resolve(struct stmt *s);
-//struct type * stmt_typecheck(struct stmt *s);
+struct type * stmt_typecheck(struct stmt *s);
 #endif
 

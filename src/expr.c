@@ -483,5 +483,418 @@ void expr_resolve (struct expr *e) {
 }
 
 
-
-
+struct type * expr_typecheck(struct expr * e) {
+	if (!e) { return type_create(TYPE_VOID); }
+	struct type * L = expr_typecheck(e->left);
+	struct type * R = expr_typecheck(e->right);
+	struct type * arg;
+	struct decl * param_cursor;
+	struct symbol * sym;
+	struct expr * expr_cursor;
+	int arg_count;
+	int param_count;
+	int counter = 0;
+	switch (e->kind) {
+		case EXPR_ADD:	// +
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot add ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") to ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_SUB:	// -
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot subtract ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(") from ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_MUL:	// *
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot multiply ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") with ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_DIV:	// /
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot divide ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") with ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_EXP:	// ^
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot use exponent on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_MOD:	// %
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot use modulo on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_GT:	// >
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot use greater than on ");
+				type_print(L);
+				printf(" and ");
+				type_print(R);
+				printf("\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_GE:	// >=
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot use greater than or equal on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_LT:	// >
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot use less than on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_LE:	// >=
+			if (L->kind!=TYPE_INTEGER || R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot use less than or equal on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_NE:	// !=
+			if (L->kind==TYPE_ARRAY || L->kind==TYPE_FUNCTION || R->kind==TYPE_ARRAY || R->kind==TYPE_FUNCTION || L->kind != R->kind) {
+				printf("type error: cannot use not equal on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_EQ:	// ==
+			if (L->kind==TYPE_ARRAY || L->kind==TYPE_FUNCTION || R->kind==TYPE_ARRAY || R->kind==TYPE_FUNCTION || L->kind != R->kind) {
+				printf("type error: cannot use equal on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_AND:	// &&
+			if (L->kind!=TYPE_BOOLEAN || R->kind!=TYPE_BOOLEAN) {
+				printf("type error: cannot use boolean logical and on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_OR:	// ||
+			if (L->kind!=TYPE_BOOLEAN || R->kind!=TYPE_BOOLEAN) {
+				printf("type error: cannot use boolean logical or on ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_NOT:	// !
+			if (R->kind!=TYPE_BOOLEAN) {
+				printf("type error: cannot use boolean logical not on ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_INCR:	// ++
+			if (L->kind!=TYPE_INTEGER) {
+				printf("type error: cannot increment ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_DECR:	// --
+			if (L->kind!=TYPE_INTEGER) {
+				printf("type error: cannot decrement ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_NEG:	// -c
+			if (R->kind!=TYPE_INTEGER) {
+				printf("type error: cannot negate ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_ASSIGN:	// = 
+			if (R->kind != L->kind || R->kind==TYPE_FUNCTION || L->kind==TYPE_FUNCTION) {
+				printf("type error: cannot assign ");
+				type_print(L);
+				printf(" (");
+				expr_print(e->left);
+				printf(") and ");
+				type_print(R);
+				printf(" (");
+				expr_print(e->right);
+				printf(")\n");
+				errors++;
+			}
+			return type_create(R->kind);
+			break;
+		case EXPR_ARR:
+			fprintf(stderr, "ERROR: arrays are not supported");
+			exit(1);
+			break;
+		case EXPR_ARR_LIST:
+			if (L->kind != TYPE_INTEGER) {
+				printf("type error: cannot index array with ");
+				type_print(L);
+				printf("(");
+				expr_print(e->left);
+				printf(")\n");
+				errors++;
+			}
+			if (e->right) {
+				return expr_typecheck(e->right);
+			}
+			else {
+				return expr_typecheck(e->left);
+			}
+			break;
+		case EXPR_FUNCT:	// function call
+			sym = scope_lookup(e->left->name);
+			expr_cursor = e->right;
+			param_cursor = sym->params;
+			param_count = 0;
+			arg_count = 0;
+			// count number of args
+			while (expr_cursor) {
+				arg_count++;
+				expr_cursor = expr_cursor->right;
+			}
+			// count number of params
+			while (param_cursor) {
+				param_count++;
+				param_cursor = param_cursor->next;
+			}
+			// compare arg_count to param_count for first check of function calls
+			if (arg_count != param_count) {
+				printf("type error: %d arguments passed into function %s, which requires %d arguments", arg_count, e->left->name, param_count);
+				errors++;
+				return type_create(sym->type->kind);
+			}
+			expr_cursor = e->right;
+			param_cursor = sym->params;
+			if (arg_count==1) {
+				if (!type_compare(expr_typecheck(expr_cursor->left), param_cursor->type)) {
+					printf("type error: argument 1 of function %s is of type ", e->left->name);
+					type_print(expr_typecheck(expr_cursor->left));
+					printf(" (");
+					expr_print(e->right);
+					printf(") when ");
+					type_print(param_cursor->type);
+					printf(" is required\n");
+					errors++;
+				}
+			}
+			else {
+				counter = 0;
+				while (expr_cursor) {
+					counter++;
+					if (!type_compare(expr_typecheck(expr_cursor->left), param_cursor->type)) {
+						printf("type error: argument %d of function %s  is of the type ", counter, e->left->name);
+						type_print(expr_typecheck(expr_cursor->left));
+						printf(" (");
+						expr_print(expr_cursor->left);
+						printf(") when ");
+						type_print(param_cursor->type);
+						printf(" is required\n");
+						errors++;
+					}
+					if (expr_cursor) {
+						expr_cursor = expr_cursor->right;
+					}
+					param_cursor = param_cursor->next;
+				}
+			}
+			return type_create(sym->type->kind);
+			break;
+		case EXPR_GROUP:
+			return type_create(L->kind);
+			break;
+		case EXPR_BLOCK:	// for expr lists of expr lists (for arrays of arrays)
+			expr_cursor = e->right;
+			while (expr_cursor) {
+				if (expr_cursor->kind==EXPR_LIST) {
+					if (!expr_cursor->right) {
+						counter++;//=2;
+						break;
+					}
+					else {
+						counter++;
+						expr_cursor = expr_cursor->right;
+					}
+				}
+				else {
+					counter++;
+					break;
+				}
+			}
+			return expr_typecheck(e->right);
+			break;
+		case EXPR_BOOL:	// true/false
+			return type_create(TYPE_BOOLEAN);
+			break;
+		case EXPR_NAME:	// ident
+			return e -> symbol -> type;
+			break;
+		case EXPR_INT:	// #'s
+			return type_create(TYPE_INTEGER);
+			break;
+		case EXPR_CHAR:
+			return type_create(TYPE_CHARACTER);
+			break;
+		case EXPR_STR:
+			fprintf(stderr, "ERROR: not implemented");
+			exit(1);
+		case EXPR_LIST:
+			expr_cursor = e->right;
+			while (expr_cursor) {
+				if (expr_cursor->kind==EXPR_LIST) {
+					if (!expr_cursor->right) {
+						counter+=2;
+						break;
+					}
+					else {
+						counter++;
+						expr_cursor = expr_cursor->right;
+					}
+				}
+				else {
+					counter++;
+					break;
+				}
+			}
+			return type_create(TYPE_ARRAY);
+			break;
+	}
+}

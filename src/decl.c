@@ -105,7 +105,7 @@ void decl_resolve(struct decl *d) {
 	if (!d) return;
 
 	if (scope_level() == 1) {
-		d->symbol = symbol_create(SYMBOL_GLOBAL, d->type, d->name);
+		d->symbol = symbol_create(SYMBOL_GLOBAL, d->type, d->name, d->params);
 
 	} else {
 		// nonglobal functions
@@ -113,7 +113,7 @@ void decl_resolve(struct decl *d) {
 			fprintf(stderr, "ERROR: cannot declare non-global function %s\n", d->name);
 			exit(1);
 		} else { // local vars
-			d->symbol = symbol_create(SYMBOL_LOCAL, d->type, d->name);
+			d->symbol = symbol_create(SYMBOL_LOCAL, d->type, d->name, d->params);
 		}
 	}
 
@@ -136,5 +136,66 @@ void decl_resolve(struct decl *d) {
 		scope_exit();
 	}
 	decl_resolve(d->next);
+}
+
+struct type *decl_typecheck(struct decl *d) {
+	if(!d) return type_create(TYPE_VOID);
+
+	struct type *t;
+	if (d->value) {
+	 	struct type *expr_result = expr_typecheck(d->value);
+
+		if (d->type->kind == expr_result->kind) {
+			t = type_create(d->type->kind);
+		} else { //typing conflict
+			printf("ERROR: %s was given a ", d->name);
+			type_print(expr_result);
+			printf(" when expecting a(n) ");
+			type_print(d->type);
+		 	printf("\n");
+
+			errors++;
+		}
+	} else if (d->expr) {
+		struct type *t1 = type_create(TYPE_STRING);
+		struct type *t2 = type_create(TYPE_ARRAY);
+
+		if (type_compare(d->type, t1)  || type_compare(d->type, t2)){
+			printf("ERROR: cannot declare array or execution of type");
+			type_print(d->type);
+			errors++;
+		}
+	} else if (d->code) {
+		struct type *cd = stmt_typecheck(d->code);
+
+		if (cd) {
+			if (type_compare(d->type, cd) == 1) {
+				t = type_create(d->type->kind);
+			} else {
+				printf("ERROR: %s returned ", d->name);
+				type_print(cd);
+				printf(" but a(n)");
+				type_print(d->type);
+				printf(" was expected\n");
+
+				errors++;
+			}
+
+		} else {
+			/*
+			if(d->type->subtype->kind == TYPE_VOID) {
+				t = type_create(TYPE_VOID);
+			} else {
+				printf("ERROR: missing return value in %s , expected a(n) ", d->name);
+				type_print(d->type->subtype);
+
+				errors++;
+			}*/
+		}
+	} else { //has no code
+		//arrays not implemented
+	}
+	decl_typecheck(d->next);
+	return t;
 }
 

@@ -1,12 +1,9 @@
 string $url = "http://blahblahblah.com";
-
-//expressions are different than executions
-
 int $day = 35;
 
-[ firefox, $url ]
+string $s = [ firefox, $url ];
 
-[wget, $url] //try without extra whitespace
+[wget, $url]; //try without extra whitespace
 
 string $summary( int $a, string $b)
 	return [ df, -h, / ]; //`-` operator is a dash, minus, and substraction

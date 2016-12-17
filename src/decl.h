@@ -29,7 +29,7 @@ void decl_print(struct decl *d, int indent, int param);
 void decl_print_params(struct decl *p);
 void decl_print_elems(struct expr *e);
 void decl_resolve(struct decl *d);
-//struct type * decl_typecheck(struct decl *d);
+struct type * decl_typecheck(struct decl *d);
 #endif
 
 

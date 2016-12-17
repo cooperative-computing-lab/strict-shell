@@ -210,3 +210,77 @@ void stmt_resolve(struct stmt *s) {
 }
 
 
+struct type *stmt_typecheck(struct stmt *s) {
+	if (!s) return 0;
+
+	struct type *s_next = stmt_typecheck(s->next);
+
+	decl_typecheck(s->decl);
+	expr_typecheck(s->init_expr);
+	struct type * expr_recurse = expr_typecheck(s->expr);
+	expr_typecheck(s->next_expr);
+
+	/* possible type conflicts in stmt */
+	struct type *next_expr;
+
+	switch (s->kind) {
+		case STMT_RETURN:
+			next_expr = expr_typecheck(s->expr);
+			if(!s_next || next_expr->kind == s_next->kind) {
+				s_next = next_expr;
+			} else {
+				printf("ERROR: more than one type returned from function\n");
+				errors++;
+			}
+			break;
+		case STMT_PRINT:
+			expr_typecheck(s->expr->left);
+			break;
+		case STMT_DECL:
+			if (s->decl->type->kind == TYPE_FUNCTION){
+				printf("ERROR: cannot declare a nested function\n");
+				errors++;
+			}
+			break;
+		case STMT_FOR:
+			/*if (expr_recurse->kind != TYPE_BOOLEAN || expr_recurse->kind != TYPE_VOID){
+				printf("ERROR: cannot declare a condition of type ");
+				type_print(expr_recurse);
+				printf("\n");
+				errors++;
+			}*/
+			break;
+		case STMT_IF_ELSE:
+			if (expr_recurse->kind != TYPE_BOOLEAN){
+				printf("ERROR: cannot declare a condition of type ");
+				type_print(expr_recurse);
+				printf("\n");
+				errors++;
+			}
+			break;
+	}
+
+	// body, else_body, next, not stmt-type specific
+	struct type *body = stmt_typecheck(s->body);
+	struct type *else_body = stmt_typecheck(s->else_body);
+	if (body) {
+		if (body->kind == s_next->kind || !s_next) {
+			s_next = body;
+		} else {
+			printf("ERROR: more than one type returned from function\n");
+			errors++;
+		}
+	}
+
+	if (else_body) {
+		if(else_body->kind == s_next->kind || !s_next) {
+			s_next = else_body;
+		} else {
+			printf("ERROR: more than one type returned from function\n");
+			errors++;
+		}
+	}
+
+	return s_next;
+}
+

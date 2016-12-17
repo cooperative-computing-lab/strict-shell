@@ -132,17 +132,22 @@ decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
 		{ 
 			$$ = decl_create($2, $1, 0, 0, 0, $4, 0, NULL); 
 		}
-	 | type id L_PAREN decl_list R_PAREN L_BRACE stmt_list R_BRACE
+	 | type id L_PAREN decl_list R_PAREN stmt_list
 		{ 
 			// what about $4? the params
 			// subtype is $1, since there is no explicit ARRAY type like cminor
-			$$ = decl_create_func($2, 0, $4, $1, 0, 0, $7, NULL); 
+			$$ = decl_create_func($2, 0, $4, $1, 0, 0, $6, NULL); 
+		}	 
+	 | type id ASSIGN L_BRACE expr_list R_BRACE
+		{
+			//command execution
+			//TODO typecheck this
+			$$ = decl_create($2, $1, 0, 0, $5, 0, 0, NULL);
 		}
-	 
-	 | type id L_BRACKET expr_list R_BRACKET
+	 | ARRAY id L_BRACKET expr_list R_BRACKET
 		{ 
 			// what about the array elems? $4
-			$$ = decl_create_array($2, 0, 0, $1, $4, 0, 0, NULL); 
+			$$ = decl_create_array($2, 0, 0, NULL, $4, 0, 0, NULL); 
 		}
 	/* | type id L_BRACKET expr_list R_BRACKET ASSIGN 
 		{ 
@@ -175,6 +180,8 @@ stmt : decl SEMICOLON
 		{ $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7); } 
 	 | expr SEMICOLON
 		{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0); }
+	 | L_BRACE expr_list R_BRACE SEMICOLON
+		{ $$ = stmt_create(STMT_EXEC, 0, 0, $2, 0, 0, 0);}
 	 | PRINT expr_list SEMICOLON
 		{ $$ = stmt_create(STMT_PRINT, 0, 0, $2, 0, 0, 0); }
 	 | SWITCH L_PAREN expr R_PAREN case_list END SEMICOLON
