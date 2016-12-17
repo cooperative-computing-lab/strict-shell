@@ -100,7 +100,7 @@ void strip_quotes_parse(char * s);
 
 %type <stmt> program stmt stmt_list case case_list
 %type <decl> decl decl_list real_decl_list
-%type <expr> expr expr_list expr_or_nothing real_expr_list or_expr and_expr expr_compare       add_expr mul_expr exp_expr un_expr incr_expr expr_group /*expr_block real_expr_block*/ atomic
+%type <expr> expr expr_list expr_or_nothing real_expr_list or_expr and_expr expr_compare       add_expr mul_expr exp_expr un_expr incr_expr expr_group /*expr_block real_expr_block*/ atomic command
 %type <type> type
 %type <id> id
 
@@ -133,18 +133,11 @@ decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
 		{ 
 			$$ = decl_create($2, $1, 0, 0, 0, $4, 0, NULL); 
 		}
-	 | type id L_PAREN decl_list R_PAREN stmt_list
+	 | type id L_PAREN decl_list R_PAREN stmt_list END
 		{ 
 			// what about $4? the params
-			// subtype is $1, since there is no explicit ARRAY type like cminor
 			$$ = decl_create_func($2, 0, $4, $1, 0, 0, $6, NULL); 
 		}	 
-	 | type id ASSIGN L_BRACE expr_list R_BRACE
-		{
-			//command execution
-			//TODO typecheck this
-			$$ = decl_create($2, $1, 0, 0, $5, 0, 0, NULL);
-		}
 	 | ARRAY id ASSIGN L_BRACKET expr_list R_BRACKET
 		{ 
 			// what about the array elems? $4
@@ -181,8 +174,6 @@ stmt : decl SEMICOLON
 		{ $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7); } 
 	 | expr SEMICOLON
 		{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0); }
-	 | L_BRACE expr_list R_BRACE SEMICOLON
-		{ $$ = stmt_create(STMT_EXEC, 0, 0, $2, 0, 0, 0);}
 	 | PRINT expr_list SEMICOLON
 		{ $$ = stmt_create(STMT_PRINT, 0, 0, $2, 0, 0, 0); }
 	 | SWITCH L_PAREN expr R_PAREN case_list END SEMICOLON
@@ -317,11 +308,16 @@ expr_group : L_PAREN expr R_PAREN
 	         { $$ = expr_create( EXPR_GROUP, $2, 0); }
 		   | id L_PAREN expr_list R_PAREN
 		     { $$ = expr_create( EXPR_FUNCT, expr_create_name($1), $3); }
-		   /*| L_BRACKET real_expr_block R_BRACKET
+		   | command
+			 { $$ = $1; }
+			/*| L_BRACKET real_expr_block R_BRACKET
 		     { $$ = expr_create( 0, 0, 0); }*/
+		   ;
+command :  L_BRACE expr_list R_BRACE
+		     { $$ = expr_create( EXPR_CMD_EXEC, 0, $2); }
 	       | atomic
 	    	 { $$ = $1; }
-		   ;
+			;
 
 atomic : TRUE
 			{ $$ = expr_create_boolean_literal(1); }

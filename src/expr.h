@@ -40,6 +40,7 @@ typedef enum {
 	EXPR_BOOL,	
 	EXPR_NAME,	
 	EXPR_CMD,	
+	EXPR_CMD_EXEC,	
 	EXPR_INT,	
     EXPR_FLOAT,	
 	EXPR_CHAR,

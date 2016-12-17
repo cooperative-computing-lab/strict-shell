@@ -1,4 +1,7 @@
-string $summary( int $a, string $b)
-	return [ df, -h, / ]; //`-` operator is a dash, minus, and substraction
-END; //functions, conditionals, loops terminated in `END`
+
+int $param1 = 35;
+
+string $summary( int $param1, int $b)
+	return "hello";
+END; 
 
