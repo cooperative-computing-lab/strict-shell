@@ -1,1 +1,3 @@
-[wget, $url] //try without extra whitespace
+string $url = "bashfulbytes.com";
+array $arr = [23, 244, 24];
+string $cmd_result = {wget, $url};

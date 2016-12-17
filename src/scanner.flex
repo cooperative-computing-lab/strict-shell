@@ -68,6 +68,7 @@ break								{ return BREAK; }
 print								{ return PRINT; }
 
 \$({LETTER}|_)({LETTER}|_|{DIGIT})* { return IDENTIFIER; }
+({LETTER}|_)({LETTER}|_|{DIGIT})* { return COMMAND; }
 \"(.)*\"							{ return STRING_LITERAL; }
 \'(.{1}|\\{LETTER}|\\0|\\\\)\'	{ return CHAR_LITERAL; }
 {DIGIT}+							{ return INTEGER_LITERAL; }

@@ -1,4 +1,6 @@
-int $day = 35;
+3+3;
+int $hey = 5;
+int $hey22 = 5;
 
-[ firefox, $url ]
+string $cmd = {"firefox", "45", 3+3};
 

@@ -39,6 +39,7 @@ typedef enum {
 
 	EXPR_BOOL,	
 	EXPR_NAME,	
+	EXPR_CMD,	
 	EXPR_INT,	
     EXPR_FLOAT,	
 	EXPR_CHAR,
@@ -82,6 +83,7 @@ struct value {
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right );
 
 struct expr * expr_create_name( const char *n );
+struct expr * expr_create_command( const char *n );
 struct expr * expr_create_boolean_literal( int c );
 struct expr * expr_create_integer_literal( int c );
 struct expr * expr_create_float_literal( float c );

@@ -81,6 +81,7 @@ void strip_quotes_parse(char * s);
 %token PRINT 
 
 %token IDENTIFIER 
+%token COMMAND 
 %token STRING_LITERAL 
 %token CHAR_LITERAL 
 %token INTEGER_LITERAL 
@@ -144,10 +145,10 @@ decl : type id /*used to be DOLLAR id, but changed regex in scanner*/
 			//TODO typecheck this
 			$$ = decl_create($2, $1, 0, 0, $5, 0, 0, NULL);
 		}
-	 | ARRAY id L_BRACKET expr_list R_BRACKET
+	 | ARRAY id ASSIGN L_BRACKET expr_list R_BRACKET
 		{ 
 			// what about the array elems? $4
-			$$ = decl_create_array($2, 0, 0, NULL, $4, 0, 0, NULL); 
+			$$ = decl_create_array($2, 0, 0, NULL, $5, 0, 0, NULL); 
 		}
 	/* | type id L_BRACKET expr_list R_BRACKET ASSIGN 
 		{ 
@@ -339,8 +340,8 @@ atomic : TRUE
 			{ $$ = expr_create_integer_literal(atoi(yytext)); }
 	   | FLOAT_LITERAL 
 			{ $$ = expr_create_float_literal(atof(yytext)); }
-	   /*| COMMAND*/
-			/* TODO */
+	   | COMMAND
+			{ $$ = expr_create_command(strdup(yytext));}
 	   ;
 
 type : STRING 

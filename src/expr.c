@@ -31,6 +31,21 @@ struct expr * expr_create_name( const char *n ) {
 	new_expr -> string_literal = n;
 	return new_expr;
 }
+struct expr * expr_create_command( const char *n ) {
+	//need some type of check to make sure it's a valid command
+
+	struct expr * new_expr = malloc(sizeof * new_expr);
+	new_expr -> kind = EXPR_CMD;
+	new_expr -> left = 0;
+	new_expr -> right = 0;
+	new_expr -> name = n;
+	new_expr -> symbol = 0;
+	new_expr -> literal_value = 0;
+	new_expr -> float_literal = 0;
+	new_expr -> string_literal = n;
+	return new_expr;
+}
+
 
 struct expr * expr_create_boolean_literal( int c ) {
 	struct expr * new_expr = malloc(sizeof * new_expr);
