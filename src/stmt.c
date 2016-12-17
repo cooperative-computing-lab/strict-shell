@@ -165,6 +165,9 @@ void stmt_resolve(struct stmt *s) {
 		case STMT_EXPR:
 			expr_resolve(s->expr);
 			break;
+		case STMT_EXEC:
+			expr_resolve(s->expr);
+			break;
 		case STMT_IF_ELSE:
 			expr_resolve(s->expr);
 
@@ -243,12 +246,8 @@ struct type *stmt_typecheck(struct stmt *s) {
 			}
 			break;
 		case STMT_FOR:
-			/*if (expr_recurse->kind != TYPE_BOOLEAN || expr_recurse->kind != TYPE_VOID){
-				printf("ERROR: cannot declare a condition of type ");
-				type_print(expr_recurse);
-				printf("\n");
-				errors++;
-			}*/
+			printf("ERROR: unimplemented");
+			exit(1);
 			break;
 		case STMT_IF_ELSE:
 			if (expr_recurse->kind != TYPE_BOOLEAN){
